@@ -31,7 +31,7 @@ class MageShop_Belluno_Helper_Data extends Mage_Core_Helper_Abstract
     }
     public function getBaseUrl()
     {
-        return Mage::getStoreConfig(trim( self::MS_BELLUNO_BASE_URL , '/' ));
+        return trim((string) Mage::getStoreConfig(self::MS_BELLUNO_BASE_URL), '/');
     }
 
     public function getWebsocket()

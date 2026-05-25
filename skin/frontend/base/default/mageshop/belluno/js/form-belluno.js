@@ -68,7 +68,7 @@ function cc_format(value) {
   var match = (matches && matches[0]) || "";
   var parts = [];
 
-  for (i = 0, len = match.length; i < len; i += 4) {
+  for (var i = 0, len = match.length; i < len; i += 4) {
     parts.push(match.substring(i, i + 4));
   }
 
@@ -268,7 +268,7 @@ Validation.addAllThese([
     "validate-date",
     "Data de nascimento inválida. Verifique por favor",
     function (v) {
-      date = v;
+      var date = v;
       var bits = date.split("/");
       var y = bits[2],
         m = bits[1],
@@ -287,7 +287,7 @@ Validation.addAllThese([
     "validate-cardnumber",
     "Número do cartão inválido. Verifique por favor",
     function (v) {
-      cardNumber = v.replace(/[\ ]/g, "");
+      var cardNumber = v.replace(/[\ ]/g, "");
 
       if (cardNumber.length === 0) return false;
 

@@ -40,11 +40,10 @@ class MageShop_Belluno_Service_ApiBelluno
         $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
         $this->setLogBeelluno("RESPONSE BELLUNO", $response, 'mageshop_belluno.log', true);
         $this->setMessege($response);
+        curl_close($ch);
         if (($httpCode > 200 || $httpCode < 200) &&  $httpCode != 422) {
             Mage::throwException("Algo não ocorreu bem. Por favor verifique suas informações.");
         }
-        curl_close($ch);
-        json_encode($response);
         return $response;
     }
     public function setLogBeelluno($title, $body, $file){

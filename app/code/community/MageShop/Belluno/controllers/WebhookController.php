@@ -24,9 +24,10 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
             $post = new Zend_Controller_Request_Http();
             $rawbody = $post->getRawBody();
             $data = json_decode($rawbody, true);
-            $helper->log($rawbody, 'mageshop_bulluno_postback.log');
+            $helper->log($rawbody, 'mageshop_belluno_postback.log');
             $orderId = null;
             $status = null;
+            $transactionId = null;
             if(isset($data['transaction']) && count($data['transaction']) > 0){
                 $transactionId = $data['transaction']['transaction_id'];
                 $orderId = $data['transaction']['details'];
@@ -38,7 +39,7 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
                 return false;
             }
             $order = Mage::getModel('sales/order')->loadByIncrementId($orderId);
-            if(!$order){
+            if(!$order->getId()){
                 return false;
             }
 
@@ -49,17 +50,20 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
             if($payment && $payment->getMethod()){
                 $method = $payment->getMethod();
             }else{
-                $helper->log("Erro: Objeto de pagamento inválido ou método de pagamento não definido.", 'mageshop_bulluno_error_postback.log');
+                $helper->log("Erro: Objeto de pagamento inválido ou método de pagamento não definido.", 'mageshop_belluno_error_postback.log');
                 $order->addStatusHistoryComment(
-                    $helper->_("Ops, Houve um Problema ao Atualizar o Pedido \n 
-                        Desculpe-nos pelo transtorno. Estamos enfrentando dificuldades ao tentar processar a atualização do seu pedido. Por favor, 
-                        aguarde alguns momentos, ou se preferir, tente forçar a atualização clicando no botão \"Forçar Pedido\".") 
+                    $helper->__("Ops, Houve um Problema ao Atualizar o Pedido \n
+                        Desculpe-nos pelo transtorno. Estamos enfrentando dificuldades ao tentar processar a atualização do seu pedido. Por favor,
+                        aguarde alguns momentos, ou se preferir, tente forçar a atualização clicando no botão \"Forçar Pedido\".")
                     , false);
                 $order->save();
                 return false;
             }
             
             $uri = $this->_methodPayment($method, $transactionId);
+            if (empty($uri)) {
+                return false;
+            }
             $api = $this->getConnector();
 
             /**
@@ -69,7 +73,7 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
             /**
              * Gera um log do resultado
              */
-            $helper->log(json_encode($resBelluno) , 'mageshop_bulluno_postback_callback.log');
+            $helper->log(json_encode($resBelluno) , 'mageshop_belluno_postback_callback.log');
           
             $status = null;
             /**
@@ -109,7 +113,7 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
                 break;
             }
         } catch (\Exception $e) {
-            $helper->log( json_encode( $e ), 'mageshop_bulluno_error_postback.log');
+            $helper->log( json_encode( $e ), 'mageshop_belluno_error_postback.log');
            return false;
         }
     }
@@ -118,12 +122,14 @@ class MageShop_Belluno_WebhookController extends MageShop_Belluno_Controller_Abs
     {
       switch ($key) {
         case 'belluno_creditcard':
+        case 'belluno_link':
           return "/v2/transaction/{$transaction_id}";
         case 'belluno_bankslip':
           return "/v2/bankslip/{$transaction_id}";
         case 'belluno_pix':
           return "/v2/transaction/{$transaction_id}/pix";
       }
+      return null;
     }
     
     /**Function to return class connector for requests */

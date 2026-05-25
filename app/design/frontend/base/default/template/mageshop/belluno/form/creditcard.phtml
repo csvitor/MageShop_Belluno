@@ -261,7 +261,7 @@
 
     function bellunoInit(){
         $belluno("#belluno_card_number").on("input", function() {
-            $cardNumber = this.value;
+            var $cardNumber = this.value;
             if ($cardNumber.length > 5) {
                 if (CreditCardValidation.checkCredit($cardNumber)) {
                     let flag;

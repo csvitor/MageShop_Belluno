@@ -68,7 +68,11 @@ class MageShop_Belluno_Block_Form_Creditcard extends Mage_Payment_Block_Form
       $maxInstallments = Mage::getStoreConfig('payment/belluno_creditcard/installments');
       $minValueInstalment = Mage::getStoreConfig('payment/belluno_creditcard/min_installment');
       $dataInterest = Mage::getStoreConfig('payment/belluno_creditcard/installment_interest');
-      $dataInterest = unserialize($dataInterest);
+      $dataInterest = !empty($dataInterest) ? @unserialize($dataInterest, ['allowed_classes' => false]) : [];
+      if (!is_array($dataInterest)) {
+        $dataInterest = [];
+      }
+      $installmentInterest = [];
       foreach ($dataInterest as $key => $value) {
         $installmentInterest[] = $value['from_qty'];
       }
@@ -83,7 +87,7 @@ class MageShop_Belluno_Block_Form_Creditcard extends Mage_Payment_Block_Form
         $valuePortion2f = number_format($valuePortion, 2, ",", ".");
         $times = $i + 1;
         if (($i + 1) == 1) {
-          if ($installmentInterest[0] == 0 || $installmentInterest[0] == null) {
+          if (!isset($installmentInterest[0]) || $installmentInterest[0] == 0) {
             $arrayInstallments[$times] = "1x de R$$valuePortion2f sem juros";
           } else {
             $interest = $valuePortion * ($installmentInterest[0] / 100);

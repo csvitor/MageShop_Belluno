@@ -5,9 +5,12 @@ $order = $this->getInfo()->getOrder();
 $payment = $order->getPayment();
 $method = $payment->getMethod();
 $url_store =  Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
-$transaction_id = isset($payment->getAdditional_information()['transaction_id']) ? $payment->getAdditional_information()['transaction_id'] : null;
+$transaction_id = isset($payment->getAdditionalInformation()['transaction_id']) ? $payment->getAdditionalInformation()['transaction_id'] : null;
 $total = $order->getGrandTotal();
-$pix = json_decode($payment->getAdditional_information()['pix'], true); 
+$pix = json_decode((string) $payment->getAdditionalInformation('pix'), true);
+if (!is_array($pix)) {
+    $pix = [];
+}
 $pix_expires_at = isset($pix['pix']['expires_at']) ? Mage::getModel('core/date')->timestamp($pix['pix']['expires_at']) : 0; 
 $currentTimestamp = Mage::getModel('core/date')->timestamp(time());
 $transaction_id = isset($pix['id']) ? $pix['id'] : null;

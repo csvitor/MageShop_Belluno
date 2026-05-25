@@ -79,6 +79,7 @@ class MageShop_Belluno_Model_Payment_Bankslip_CreateRequest {
       $shippingValue = 0;
     }
 
+    $array = [];
     foreach ($items as $item) {
       if ($item->getProductType() == 'simple' || $item->getProductType() == 'grouped') {
         if ($item->getPrice() == 0) {
@@ -151,7 +152,10 @@ class MageShop_Belluno_Model_Payment_Bankslip_CreateRequest {
    * Function to get days of expiration
    */
   public function getDUE() {
-    $days = Mage::getStoreConfig('payment/belluno_bankslip/days_expiration');
+    $days = (int) Mage::getStoreConfig('payment/belluno_bankslip/days_expiration');
+    if ($days < 1) {
+      $days = 1;
+    }
     $today = getdate();
     $date = new DateTime($today['year'] . '-' . $today['mon'] . '-' . $today['mday']);
     $date->add(new DateInterval('P' . $days . 'D'));
@@ -169,7 +173,7 @@ class MageShop_Belluno_Model_Payment_Bankslip_CreateRequest {
    * Function to format cpf and cnpj
    */
   public function formatCpfCnpj($doc) {
-    $doc = preg_replace("/[^0-9]/", "", $doc);
+    $doc = preg_replace("/[^0-9]/", "", (string) $doc);
     $qtd = strlen($doc);
 
     if ($qtd >= 11) {

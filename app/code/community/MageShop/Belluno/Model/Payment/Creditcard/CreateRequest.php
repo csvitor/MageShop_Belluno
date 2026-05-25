@@ -119,6 +119,7 @@ class MageShop_Belluno_Model_Payment_Creditcard_CreateRequest
             $shippingValue = 0;
         }
 
+        $array = [];
         $card_flag = $data['card_flag'];
         //create array for show in admin
         $this->createViewInformations(
@@ -218,8 +219,12 @@ class MageShop_Belluno_Model_Payment_Creditcard_CreateRequest
         $interest = Mage::getStoreConfig('payment/belluno_creditcard/installment_interest');
         $maxInstallment = Mage::getStoreConfig('payment/belluno_creditcard/installments');
 
-        $interest = unserialize($interest);
+        $interest = !empty($interest) ? @unserialize($interest, ['allowed_classes' => false]) : [];
+        if (!is_array($interest)) {
+            $interest = [];
+        }
         $valueInterest = 0;
+        $interestPercent = 0;
 
         $i = 1;
         foreach ($interest as $value) {
@@ -327,7 +332,7 @@ class MageShop_Belluno_Model_Payment_Creditcard_CreateRequest
      */
     public function formatCpfCnpj($doc)
     {
-        $doc = preg_replace("/[^0-9]/", "", $doc);
+        $doc = preg_replace("/[^0-9]/", "", (string) $doc);
         $qtd = strlen($doc);
 
         if ($qtd >= 11) {

@@ -2,7 +2,7 @@
 
 class MageShop_Belluno_WebsocketController extends MageShop_Belluno_Controller_AbstractController {
   private $resulstApi = [];
-  private $error = null;
+  private $error = [];
   private $img_res_frontend = null;
   private $comment_res_frontend = null;
   const IMAGE_PAYMENT_SUCCESS = "media/mageshop/belluno/images/payment_sucess.png";
@@ -21,12 +21,15 @@ class MageShop_Belluno_WebsocketController extends MageShop_Belluno_Controller_A
         );
       }
 
-      Mage::helper("belluno")->log( json_encode( $methodsPayments ), 'bulluno-payment-websocket.log');
+      Mage::helper("belluno")->log( json_encode( $methodsPayments ), 'belluno-payment-websocket.log');
       foreach ($methodsPayments as $key => $transaction_id) {
-        if(!empty($transaction_id) || strlen($transaction_id)){
+        if(!empty($transaction_id)){
           $uri = $this->_methodPayment( $key, $transaction_id);
+          if (empty($uri)) {
+            continue;
+          }
           $this->resulstApi = json_decode($api->doRequest('', "GET", $uri), true);
-          Mage::helper("belluno")->log( json_encode( $this->resulstApi ), 'bulluno-payment-websocket.log');
+          Mage::helper("belluno")->log( json_encode( $this->resulstApi ), 'belluno-payment-websocket.log');
           if($this->resulstApi){
             $this->order();
           }else{
@@ -48,7 +51,7 @@ class MageShop_Belluno_WebsocketController extends MageShop_Belluno_Controller_A
 
       }
       
-      if($this->error !== null){
+      if(!empty($this->error)){
         echo json_encode($this->error);
         return false;
       }
@@ -81,7 +84,7 @@ class MageShop_Belluno_WebsocketController extends MageShop_Belluno_Controller_A
       $this->error [] = array(
         "response" => false,
         "code" => "402",
-        "message" =>'402 ' + $orderId
+        "message" =>'402 ' . $orderId
       );
       return false;
     }
@@ -128,12 +131,14 @@ class MageShop_Belluno_WebsocketController extends MageShop_Belluno_Controller_A
   {
     switch ($key) {
       case 'belluno_creditcard':
+      case 'belluno_link':
         return "/v2/transaction/{$transaction_id}";
       case 'belluno_bankslip':
         return "/v2/bankslip/{$transaction_id}";
       case 'belluno_pix':
         return "/v2/transaction/{$transaction_id}/pix";
     }
+    return null;
   }
   
   /**Function to return class connector for requests */

@@ -2,7 +2,7 @@
 
 class MageShop_Belluno_ConsultController extends MageShop_Belluno_Controller_AbstractController {
   private $resulstApi = [];
-  private $error = null;
+  private $error = [];
    /**
    * Function to get postback from belluno @author Vitor <web@tryideas.com.br>
    */
@@ -21,7 +21,7 @@ class MageShop_Belluno_ConsultController extends MageShop_Belluno_Controller_Abs
         if($transaction_id){
           $uri = $this->_methodPayment( $key, $transaction_id);
           $this->resulstApi = json_decode($api->doRequest('', "GET", $uri), true);
-          Mage::helper("belluno")->log( json_encode( $this->resulstApi),'mageshop-bulluno-payment-force-admin.log');
+          Mage::helper("belluno")->log( json_encode( $this->resulstApi),'mageshop-belluno-payment-force-admin.log');
           if($this->resulstApi){
             $this->order();
           }else{
@@ -35,7 +35,7 @@ class MageShop_Belluno_ConsultController extends MageShop_Belluno_Controller_Abs
 
       }
       
-      if($this->error !== null){
+      if(!empty($this->error)){
         echo json_encode($this->error);
         return false;
       }
@@ -67,7 +67,7 @@ class MageShop_Belluno_ConsultController extends MageShop_Belluno_Controller_Abs
       $this->error [] = array(
         "res" => false,
         "code" => "402",
-        "message" =>'402 ' + $orderId
+        "message" =>'402 ' . $orderId
       );
       return false;
     }

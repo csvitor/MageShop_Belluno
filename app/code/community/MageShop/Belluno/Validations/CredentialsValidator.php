@@ -100,7 +100,7 @@ class MageShop_Belluno_Validations_CredentialsValidator {
     if ($result == false) {
       Mage::throwException(__('Customer email not filled in or invalid!'));
     }
-    if (!strlen($phone) >= 9) {
+    if (strlen($phone) < 9) {
       Mage::throwException(__('Customer cellphone not filled in or invalid!'));
     }
   }
