@@ -1,0 +1,348 @@
+<?xml version="1.0"?>
+<config>
+  <sections>
+    <payment>
+      <groups>
+        <mageshop_belluno_custompayment translate="label" module="belluno">
+          <label>Belluno Pagamento</label>
+          <frontend_type>text</frontend_type>
+          <sort_order>100</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <environment translate="label">
+              <label>Ambiente</label>
+              <frontend_type>select</frontend_type>
+              <source_model>belluno/source_environment</source_model>
+              <sort_order>10</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+            </environment>
+            <auth_token translate="label">
+              <label>Token de Autenticação</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>20</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+            </auth_token>
+            <public_key translate="label">
+              <label>Public Key Konduto</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>30</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </public_key>
+            <base_url>
+              <label>Site Base Url</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <comment>Ex: https://minhaloja.com.br/</comment>
+            </base_url>
+            <action_logs>
+              <label>Gravar logs</label>
+              <frontend_type>select</frontend_type>
+              <source_model>belluno/source_logs</source_model>
+              <sort_order>50</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </action_logs>
+          </fields>
+        </mageshop_belluno_custompayment>
+
+        <belluno_creditcard translate="label" module="belluno">
+          <label>Belluno Cartão de Crédito</label>
+          <frontend_type>text</frontend_type>
+          <sort_order>101</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <active translate="label">
+              <label>Ativado</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>10</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </active>
+            <title translate="label">
+              <label>Título</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>20</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+              <validate>required-entry</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </title>
+            <order_status translate="label">
+              <label>New Order Status</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_order_status</source_model>
+              <sort_order>25</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </order_status>
+            <installments translate="label">
+              <label>Número de parcelas</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <validate>required-entry validate-number integer</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </installments>
+            <installment_interest translate="label">
+              <label>Juros Parcelados</label>
+              <frontend_model>belluno/adminhtml_form_field_installments</frontend_model>
+              <backend_model>adminhtml/system_config_backend_serialized_array</backend_model>
+              <sort_order>50</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </installment_interest>
+            <min_installment translate="label">
+              <label>Valor Mínimo por Parcela</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>60</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <validate>required-entry validate-number</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </min_installment>
+            <capture_tax translate="label">
+              <label>Capturar documento (CPF or CNPJ) no formulário de pagamento?</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </capture_tax>
+          </fields>
+        </belluno_creditcard>
+
+        <belluno_bankslip translate="label" module="belluno">
+          <label>Belluno Boleto</label>
+          <frontend_type>text</frontend_type>
+          <sort_order>102</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <active translate="label">
+              <label>Ativado</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>10</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </active>
+            <title translate="label">
+              <label>Título</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>20</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+              <validate>required-entry</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </title>
+            <order_status translate="label">
+              <label>New Order Status</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_order_status</source_model>
+              <sort_order>25</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </order_status>
+            <days_expiration translate="label">
+              <label>Dias para Vencimento</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>30</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <validate>required-entry validate-number integer</validate>
+              <comment>Se não for preenchido será considerado um dia.</comment>
+              <depends>
+                <active>1</active>
+              </depends>
+            </days_expiration>
+            <capture_tax translate="label">
+              <label>Capturar documento (CPF or CNPJ) no formulário de pagamento?</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </capture_tax>
+          </fields>
+        </belluno_bankslip>
+
+        <belluno_pix translate="label" module="belluno">
+          <label>PIX - via Belluno</label>
+          <frontend_type>text</frontend_type>
+          <sort_order>103</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <active translate="label">
+              <label>Ativado</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>10</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </active>
+            <title translate="label">
+              <label>Título</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>20</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+              <validate>required-entry</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </title>
+            <order_status translate="label">
+              <label>New Order Status</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_order_status</source_model>
+              <sort_order>25</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </order_status>
+            <websocket translate="label">
+              <label>Websocket</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>30</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <comment>Atualização em tempo real após o pagamento.</comment>
+              <depends>
+                <active>1</active>
+              </depends>
+            </websocket>
+            <capture_tax translate="label">
+              <label>Capturar documento (CPF or CNPJ) no formulário de pagamento?</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </capture_tax>
+          </fields>
+        </belluno_pix>
+
+        <belluno_link translate="label" module="belluno">
+          <label>Link de pagamento - via Belluno</label>
+          <frontend_type>text</frontend_type>
+          <sort_order>104</sort_order>
+          <show_in_default>1</show_in_default>
+          <show_in_website>1</show_in_website>
+          <show_in_store>1</show_in_store>
+          <fields>
+            <active translate="label">
+              <label>Ativado</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_yesno</source_model>
+              <sort_order>10</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+            </active>
+            <title translate="label">
+              <label>Título</label>
+              <frontend_type>text</frontend_type>
+              <sort_order>20</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>1</show_in_store>
+              <validate>required-entry</validate>
+              <depends>
+                <active>1</active>
+              </depends>
+            </title>
+            <payment_methods translate="label">
+              <label>Payment Methods</label>
+              <frontend_type>multiselect</frontend_type>
+              <source_model>belluno/source_methods</source_model>
+              <sort_order>30</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </payment_methods>
+            <order_status translate="label">
+              <label>New Order Status</label>
+              <frontend_type>select</frontend_type>
+              <source_model>adminhtml/system_config_source_order_status</source_model>
+              <sort_order>40</sort_order>
+              <show_in_default>1</show_in_default>
+              <show_in_website>1</show_in_website>
+              <show_in_store>0</show_in_store>
+              <depends>
+                <active>1</active>
+              </depends>
+            </order_status>
+          </fields>
+        </belluno_link>
+      </groups>
+    </payment>
+  </sections>
+</config>

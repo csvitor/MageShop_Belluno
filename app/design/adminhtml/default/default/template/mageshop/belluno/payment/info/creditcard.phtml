@@ -1,0 +1,85 @@
+
+<?php
+
+$order = $this->getInfo()->getOrder();
+$payment = $order->getPayment();
+$method = $payment->getMethod();
+$url_store =  Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+$transaction_id = isset($payment->getAdditional_information()['transaction_id']) ? $payment->getAdditional_information()['transaction_id'] : null;
+$total = $order->getGrandTotal();
+$viewJson = $payment->getAdditional_information('view'); 
+$viewData = json_decode($viewJson, true);
+$imageIcon = $url_store . 'media/mageshop/belluno/images/belluno.png';
+?>
+<style>
+    .col {
+        display: block;
+        width: 100%;
+        margin: 1px;
+    }
+    .key{
+        display: inline-block;
+    }
+    .value{
+        display: inline-block;
+    }
+</style>
+<br>
+<div class="box-creditcard">
+    <div class="banner" style="background-image: url('<?php echo $imageIcon?>');"></div>
+    <h3><?= Mage::helper('core')->__("Cartão de Crédito - Belluno") ?></h3>
+
+    <h2><?= "Informações do pagamento:" ?></h2>
+    <?php
+    $num = 0;
+    foreach ($viewData as $value) :
+        $num++;
+        $rest = $num % 2; ?>
+        <?php if ($rest == 0) : ?>
+            <b class="key"><?= $value ?></b>
+            </div>
+        <?php else : ?>
+            <div class="col">
+            <p class="value"><?= $value ?></p>
+        <?php endif; ?>
+        
+    <?php endforeach; ?>
+</div>
+
+
+<?php if($transaction_id != null): ?>
+<div class="header_force_update">
+    <a href="javascript:void(0)" onclick="Belluno.update('<?=$url_store?>belluno/consult?<?=$method?>=<?=$transaction_id?>');">Força atualização do pedido</a>
+</div>
+<style>
+    .header_force_update {
+        display: block;
+        margin-top: 10px;
+    }
+    .header_force_update a{
+        padding: 5px;
+        background:#f5854b;
+        color:#FFF;
+    }
+    .box-creditcard .banner {
+        width: 100%;
+        max-width: 245px;
+        height: 60px;
+        background-size: 243px;
+        background-repeat: no-repeat;
+    }
+    .box-creditcard h3 {
+        color: #005aad;
+        text-align: left;
+        font-weight: 700;
+        font-size: 17px;
+        border-bottom: 1px solid;
+        padding-left: 10px;
+        width: auto;
+    }
+
+</style>
+
+<?php endif; ?>
+
+<div style="clear:both; margin-bottom: 20px"></div>

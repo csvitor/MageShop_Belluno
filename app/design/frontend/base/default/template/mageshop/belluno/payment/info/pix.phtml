@@ -1,0 +1,91 @@
+<?php 
+$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+$imageIcon = $baseUrl . 'media/mageshop/belluno/images/icon-pix.png';
+$order = $this->getInfo()->getOrder();
+$title = $this->getMethod()->getTitle();
+$helper = Mage::helper("belluno");
+?>
+<style>
+.pixpayment_belluno {
+    width: auto;
+    max-width: 200px;
+    display: flex;
+    align-items: center;
+}
+.pixpayment_belluno img {
+    width: 35px;
+    margin-right: 10px;
+}
+.pixpayment_belluno p {margin-left: 10px;}
+</style>
+<div class="pixpayment_belluno">
+    <img src="<?php echo $imageIcon?>" alt="<?php echo $title; ?>" width="120px">
+    <p><?php echo $title; ?></p>
+</div>
+<br>
+<?php
+if(!$order){
+    return;   
+}
+$state = $order->getState();
+$payment = $order->getPayment();
+$method = $payment->getMethod();
+$url_store =  Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+$total = $order->getGrandTotal();
+if($method == 'belluno_pix'): 
+$status = $payment->getAdditionalInformation("status");
+$pix = json_decode($payment->getAdditionalInformation('pix'), true);
+$pix_expires_at = isset($pix['pix']['expires_at']) ? Mage::getModel('core/date')->timestamp($pix['pix']['expires_at']) : 0; 
+$currentTimestamp = Mage::getModel('core/date')->timestamp(time());
+$transaction_id = isset($pix['id']) ? $pix['id'] : null;
+$link_code = $pix['link_code'];
+$websocket = sprintf(
+    "%sbelluno/websocket?belluno_pix=%s", 
+    Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+    $transaction_id
+);
+
+if(isset($pix) && $status == 'Open' && !$order->hasInvoices()):
+   $code = base64_decode($pix['pix']['base64_text']); ?>
+
+     <div class="payment-pix sucess-detalhes-pix order-detalhes-pix-info">
+		<div class="qrcode-info">
+            <img src="data:image/png;base64,<?=$pix['pix']['base64_image']?>">
+            <p class="info-expire">O QR Code expira em: <?php echo date('d/m/Y H:i:s', $pix_expires_at); ?></p>
+        </div>
+        <div class="copyCode-info">
+            <input type="text" value="<?=$code;?>" id="pixTextBelluno">
+            <div class="fieldcopycode" onclick="copiarTextoPix(this)">Copiar</div>
+        </div>
+    </div>
+    <?php if($helper->getWebsocket() == '1'): ?>
+    <div class="payment-pix-paid"></div>
+    <script type="text/javascript" src="<?php echo $this->getSkinUrl('mageshop/belluno/js/websocket-belluno.js') ?>"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.1.min.js" integrity="sha256-o88AwQnZB+VDvE9tvIXrMQaPlFFSUTR+nldQm1LuPXQ=" crossorigin="anonymous"></script> -->
+    <script src='https://app.belluno.digital/pagess/plugins/Pusher/pusher-with-encryption.min.js'></script>
+    <script src='https://app.belluno.digital/pagess/plugins/Pusher/pusher-with-encryption.worker.min.js'></script>
+    <script src='https://app.belluno.digital/pagess/plugins/Echo/echo-without-module.js'></script>
+
+    <script type="text/javascript">
+    $j(document).ready(function() {
+            window.Pusher = Pusher;
+            window.Echo = new Echo({
+                broadcaster: 'pusher',
+                key: 'ws_belluno',
+                wsHost: 'websocket.belluno.digital',
+                wsPort: 6001,
+                wssPort: 443,
+                forceTLS: true,
+                encrypted: true,
+                disableStats: true,
+                enabledTransports: ['ws', 'wss'],
+            });
+            window.Echo.channel('transaction.<?php echo $link_code;?>')
+                .listen('.TransactionPaid', (e) => {
+                    paymentConfirmed('<?=$websocket?>');
+            });
+    });
+    </script>
+    <?php endif; ?>
+  <?php endif; ?>
+<?php endif; ?>

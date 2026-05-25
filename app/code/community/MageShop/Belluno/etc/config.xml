@@ -1,0 +1,176 @@
+<?xml version="1.0"?>
+<config>
+    <modules>
+        <MageShop_Belluno>
+            <version>1.0.0</version>
+        </MageShop_Belluno>
+    </modules>
+ 
+    <global>
+        <models>
+            <belluno>
+                <class>MageShop_Belluno_Model</class>
+            </belluno>
+        </models>
+ 
+        <helpers>
+            <belluno>
+                <class>MageShop_Belluno_Helper</class>
+            </belluno>
+        </helpers>
+ 
+        <blocks>
+            <belluno>
+                <class>MageShop_Belluno_Block</class>
+            </belluno>
+        </blocks>
+        
+        <validations>
+            <belluno>
+              <class>MageShop_Belluno_Validations</class>
+            </belluno>
+        </validations>
+
+        <services>
+            <belluno>
+              <class>MageShop_Belluno_Service</class>
+            </belluno>
+        </services>
+
+        <resources>
+            <belluno_setup>
+                <setup>
+                    <module>MageShop_Belluno</module>
+                </setup>
+                <connection>
+                    <use>core_setup</use>
+                </connection>
+            </belluno_setup>
+            <belluno_write>
+                <connection>
+                    <use>core_write</use>
+                </connection>
+            </belluno_write>
+            <belluno_read>
+                <connection>
+                    <use>core_read</use>
+                </connection>
+            </belluno_read>
+        </resources>
+
+        <sales>
+            <order>
+                <states>
+                    <pending_payment translate="label">
+                        <visible_on_front>1</visible_on_front>
+                    </pending_payment>
+                </states>
+            </order>
+        </sales>
+    
+        <fieldsets>
+          <sales_convert_quote_payment>
+            <check_no>
+              <to_order_payment>*</to_order_payment>
+            </check_no>
+            <check_date>
+              <to_order_payment>*</to_order_payment>
+            </check_date>
+          </sales_convert_quote_payment>
+        </fieldsets>
+
+        <events>
+            <sales_order_save_before>
+                <observers>
+                    <belluno_order_saver>
+                        <type>singleton</type>
+                        <class>MageShop_Belluno_Model_Observer</class>
+                        <method>_cancelOrder</method>
+                    </belluno_order_saver>
+                </observers>
+            </sales_order_save_before>
+            <sales_order_creditmemo_refund>
+                <observers>
+                    <mageshop_belluno_observer>
+                        <type>singleton</type>
+                        <class>MageShop_Belluno_Model_Observer</class>
+                        <method>handleOrderRefund</method>
+                    </mageshop_belluno_observer>
+                </observers>
+            </sales_order_creditmemo_refund>
+        </events>
+
+    </global>
+
+    <default>
+        <payment>
+            <belluno_creditcard>
+                <model>belluno/payment_creditcard</model>
+                <active>1</active>
+                <title>Cartão de Crédito - via Belluno</title>
+                <sort_order>1</sort_order>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_action>order</payment_action>
+            </belluno_creditcard>
+            <belluno_bankslip>
+                <model>belluno/payment_bankslip</model>
+                <active>1</active>
+                <title>Boleto - via Belluno</title>
+                <sort_order>2</sort_order>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_action>order</payment_action>
+            </belluno_bankslip>
+            <belluno_pix>
+                <model>belluno/payment_pix</model>
+                <active>1</active>
+                <title>Pix - via Belluno</title>
+                <sort_order>3</sort_order>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_action>order</payment_action>
+            </belluno_pix>
+
+            <belluno_link>
+                <model>belluno/payment_link</model>
+                <active>1</active>
+                <title>Link de pagamento - via Belluno</title>
+                <sort_order>4</sort_order>
+                <order_status>pending</order_status>
+                <allowspecific>0</allowspecific>
+                <payment_action>order</payment_action>
+            </belluno_link>
+        </payment>
+    </default>
+
+    <frontend>
+        <layout>
+            <updates>
+                <belluno>
+                    <file>mageshop/belluno.xml</file>
+                </belluno>
+            </updates>
+        </layout>
+        <routers>
+            <mageshop_belluno>
+                <use>standard</use>
+                <args>
+                    <module>MageShop_Belluno</module>
+                    <frontName>belluno</frontName>
+                </args>
+            </mageshop_belluno>
+        </routers>
+    </frontend>
+
+    <adminhtml>
+        <layout>
+        <updates>
+            <mageshop_belluno>
+            <file>mageshop/belluno.xml</file>
+            </mageshop_belluno>
+        </updates>
+        </layout>
+    </adminhtml>
+
+</config>

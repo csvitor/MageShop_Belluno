@@ -1,0 +1,181 @@
+.payment-pix.order-detalhes-pix-info {
+    width: 100%;
+    margin: 0;
+    display: table;
+    background-color: #ffffff0a;
+    border: solid 1px #ffffff0a;
+    padding: 0px;
+    box-sizing: border-box;
+}
+.payment-pix .qrcode-info {
+    width: 100%;
+    display: inline-block;
+    float: none;
+    margin: 5px 10px;
+}
+.payment-pix .qrcode-info img {
+    width: 85%;
+    max-width: 200px;
+    margin: auto;
+    display: table;
+    padding: 10px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgb(0 0 0 / 12%);
+    border-radius: 5px;
+
+}
+.payment-pix .titulo-pagar-pix {
+    font-size: 22px;
+    color: #000;
+    text-align: center;
+    margin-top: 15px;
+    line-height: 1.2em;
+    text-transform: none;
+    font-weight: 600;
+}
+.payment-pix .copyCode-info {
+    width: 100%;
+    display: inline-block;
+    margin: 10px auto;
+}
+.payment-pix .copyCode-info input{
+    width: calc(100% - 140px);
+    height: 35px;
+    line-height: 35px;
+    font-size: 12px;
+    border: solid 1px #666;
+    border-radius: 3px;
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+.payment-pix .copyCode-info input:focus{
+    background-color: #f8f8f8;
+    outline:none;
+    border: solid 1px #111;
+}
+.payment-pix .info-expire {
+    font-size: 11px;
+    color: #999;
+    margin-top: 25px;
+    text-align: center;
+}
+.payment-pix .copyCode-info .fieldcopycode {
+    max-width: 130px;
+    width: 100%;
+    height: 35px;
+    line-height: 35px;
+    font-size: 15px;
+    padding: 0 5px;
+    float: right;
+    background: #000;
+    color: #fff;
+    border-radius: 3px;
+    cursor: pointer;
+    text-align: center;
+}
+.payment-pix .copyCode-info .fieldcopycode:hover {
+    background: #111;
+}
+
+@media only screen and (max-width: 767px) {
+    .payment-pix .copyCode-info input{
+        width: calc(100% - 00px);
+    }
+    .payment-pix .titulo-pagar-pix {
+        font-size: 18px;
+    }
+    .payment-pix .copyCode-info {
+        width: 100%;
+    }
+    .payment-pix .copyCode-info .fieldcopycode {
+        max-width: 100%;
+        margin-top: 8px;
+        margin-bottom: 15px;
+    }
+    .payment-pix .qrcode-info img {
+        width: 100%;
+    }
+}
+.payment-pix .total-info {
+    margin: auto;
+    width: 40%;
+    display: inline-block;
+    max-width: 267px;
+    text-align: center;
+    padding: 5px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border: 1px solid;
+    border-color: #0d9547;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+.payment-pix .total-info .price{
+    color:#0d9547;
+    font-weight: 500;
+    font-size: 17px;
+}
+.payment-pix .total-info span {
+    font-size: 15px;
+    font-weight: 600;
+    color: #0d9547;
+    margin-right: 2px;
+}
+
+
+.payment-pix-paid {
+    width: 80%;
+    margin: auto;
+    display: block;
+}
+
+.payment-pix-paid .success {
+    width: 100%;
+    max-width:  150px;
+    margin: 30px auto;
+}
+
+.payment-pix-paid .success img {
+    width: 100%;
+}
+.payment-pix-paid .comment{
+    width:100%;
+    max-width: 700px;
+    margin: auto;
+    background:#dedddd;
+    padding: 20px;
+    border-radius: 10px
+}
+.payment-pix-paid .comment span{
+    color: #222;
+    font-family: sans-serif;
+    font-size: 16px;
+}
+
+.lds-dual-ring {
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin: 8px;
+    border-radius: 50%;
+    border: 6px solid #25ae88;
+    border-color: #25ae88 transparent #25ae88 transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+}
+@keyframes lds-dual-ring {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+

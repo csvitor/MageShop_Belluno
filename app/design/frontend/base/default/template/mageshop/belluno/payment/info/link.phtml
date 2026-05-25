@@ -1,0 +1,11 @@
+<?php 
+$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+$imageIcon = $baseUrl . 'media/mageshop/belluno/images/icon-cartao_de_credito.png';
+$order = $this->getInfo()->getOrder();
+$title = $this->getMethod()->getTitle();
+?>
+
+<div class="ccpayment_belluno">
+    <img src="<?php echo $imageIcon?>" alt="<?php echo $title; ?>" width="120px">
+    <p><?php echo $title; ?></p>
+</div>

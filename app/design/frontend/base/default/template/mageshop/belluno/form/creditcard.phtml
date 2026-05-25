@@ -1,0 +1,278 @@
+<fieldset class="form-creditcard" id="payment_form_<?= $this->getMethodCode() ?>" style="display:none">
+<?php
+    $totals = Mage::getSingleton('checkout/session')->getQuote()->getBaseGrandTotal();
+    $intallments = $this->getInstallments($totals);
+    $pubKey = $this->getPubKeyKonduto();
+    $captureTax = $this->getFieldCaptureTax();
+    $urlCard = $this->getSkinUrl('mageshop/belluno/js/jquery/jquery.card.js');
+    $helper = Mage::helper("belluno/data");
+?>
+<style>
+    .card-wrapper {
+        max-width: 250px;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+</style>
+    <ul class="form-list">
+        <li class="form-payment">
+            <input type="hidden" id="visitor_id" name="payment[visitor_id]">
+            <input type="hidden" id="card_flag" class="required-entry" name="payment[card_flag]">
+            <div class="card-data">
+                <div class='card-wrapper'></div>
+            </div>
+            <ul>
+                <li class="wide">
+                    <label for="card_number" class="required">
+                        <?php echo $helper->__("Número do Cartão") ?><em>*</em>
+                    </label>
+                    <div class="input-box">
+                        <input type="hidden" id="belluno_card_hash" class="input-text required-entry validate-hash" name="payment[card_hash]">
+                        <input type="text" id="belluno_card_number"  
+                        class="input-text required-entry validate-cardnumber" 
+                        name="payment[card_number]" oninput="maskCardNumber(this)" maxlength="19" 
+                        placeholder="&bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull; &bull;&bull;&bull;&bull;" autocomplete="off"/>
+                    </div>
+                </li>
+
+                                
+                <li class="wide">
+                    <label for="belluno_card_name" class="required">
+                    <?php echo $helper->__("Nome do titular do cartão") ?> <em>*</em>
+                    </label>
+                    <div class="input-box">
+                        <input type="text" id="belluno_card_name" 
+                        placeholder="<?php echo $helper->__("Digite aqui") ?>" class="input-text required-entry validate-name" 
+                        name="payment[name_on_card]" autocomplete="off"/>
+                    </div>
+                </li>
+                
+                <li class="fields">
+                    <div class="card-data">
+                        <div class="field card-expires_at">
+                            <label for="expires_at" class="required">
+                                <?php echo $helper->__("Mês Vencimento") ?><em>*</em>
+                            </label>
+                            <div class="input-box">
+                                <select name="belluno_expirymonth"  class="input-text required-entry validate-expirymonth" >
+                                    <option selected disabled><?php echo $helper->__("Month") ?></option>
+                                    <option value="01"><?php echo $helper->__("January") ?> - 01</option>
+                                    <option value="02"><?php echo $helper->__("February") ?> - 02</option>
+                                    <option value="03"><?php echo $helper->__("March") ?> - 03</option>
+                                    <option value="04"><?php echo $helper->__("April") ?> - 04</option>
+                                    <option value="05"><?php echo $helper->__("May") ?> - 05</option>
+                                    <option value="06"><?php echo $helper->__("June") ?> - 06</option>
+                                    <option value="07"><?php echo $helper->__("July") ?> - 07</option>
+                                    <option value="08"><?php echo $helper->__("August") ?> - 08</option>
+                                    <option value="09"><?php echo $helper->__("Septembre") ?> - 09</option>
+                                    <option value="10"><?php echo $helper->__("Octobre") ?> - 10</option>
+                                    <option value="11"><?php echo $helper->__("Novembre") ?> - 11</option>
+                                    <option value="12"><?php echo $helper->__("Decembre") ?> - 12</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="field card-card_cvv">
+                            <label for="card_cvv" class="required"><?php echo $helper->__("Ano do Vencimento") ?><em>*</em></label>
+                            <div class="input-box">
+                                <select name="belluno_expiryyear"  class="input-text required-entry validate-expiryyear" >
+                                    <?php foreach ($this->getCcYears() as $k=>$v): ?>
+                                        <option value="<?php echo $k?$k:'' ?>"><?php echo $v ?></option>
+                                    <?php endforeach ?>
+                                </select>
+                                <input type="hidden" id="belluno_expires_at" class="input-text required-entry validate-expires_at" name="payment[expires_at]" autocomplete="off"/>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+
+                <li class="wide">
+                    <label for="card_cvv" class="required"><?php echo $helper->__("CVV") ?> <em>*</em></label>
+                    <div class="input-box">
+                        <input type="text" id="belluno_card_cvv" placeholder="&bull;&bull;&bull;" class="input-text required-entry validate-cvv" name="payment[cc_cvv]" maxlength="4" autocomplete="off"/>
+                    </div>
+                </li>
+                <?php if ($captureTax == true) : ?>
+                    <li class="wide">
+                        <label for="belluno_card_holder_document" class="required"><?php echo $helper->__("CPF/CNPJ do titular do cartão") ?><em>*</em></label>
+                        <div class="input-box">
+                            <input type="text" id="belluno_card_holder_document" 
+                            placeholder="<?php echo $helper->__("Digite aqui") ?>" class="input-text required-entry validate-document" 
+                            name="payment[card_holder_document]" 
+                            onkeyup="maskDocument(this)" 
+                            maxlength="18" autocomplete="off"/>
+                        </div>
+                    </li>
+                <?php endif; ?>
+                <li class="fields">
+                    <div class="cardholder-data">
+                        <div class="field cardholder-card_holder_birth">
+                            <label for="belluno_card_holder_birth" class="required">
+                                <?php echo $helper->__("Data de nascimento do titular do cartão") ?> <em>*</em></label>
+                            <div class="input-box">
+                                <input type="text" id="belluno_card_holder_birth" class="input-text required-entry validate-date" 
+                                name="payment[card_holder_birth]" placeholder="00/00/0000" 
+                                onkeyup="maskBirth(this)" maxlength="10" autocomplete="off"/>
+                            </div>
+                        </div>
+                        <div class="field cardholder-card_holder_cellphone">
+                            <label for="belluno_card_holder_cellphone" class="required"><?php echo $helper->__("Celular do titular do cartão") ?> <em>*</em></label>
+                            <div class="input-box">
+                                <input type="text" id="belluno_card_holder_cellphone" class="input-text required-entry validate-cellphone" name="payment[card_holder_cellphone]" placeholder="(00) 00000-0000" onkeyup="maskPhone(this)" maxlength="15" autocomplete="off"/>
+                            </div>
+                        </div>
+                    </div>
+                </li>
+                <li class="wide">
+                    <label for="belluno_card_installment" class="required"><?php echo $helper->__("Nº de Parcelas") ?> <em>*</em></label>
+                    <div class="input-box">
+                        <select id="belluno_card_installment" class="validate-installment" name="payment[card_installment]">
+                            <?php foreach ($intallments as $key => $value) : ?>
+                                <?php if ($key == 0) {
+                                    $key = "";
+                                    $value = "Selecione o Nº de parcelas";
+                                } ?>
+                                <option value="<?= ($key) ?>"><?= $value ?></option>
+                            <?php endforeach ?>
+                        </select>
+                    </div>
+                </li>
+            </ul>
+        </li>
+    </ul>
+    
+<script type="text/javascript">
+    const s2 = document.createElement("script");
+    s2.id = "belluno";
+    s2.async = false;
+
+    document.getElementsByTagName("body")[0].appendChild(s2);
+    document.getElementById("belluno").innerHTML =
+        `var __kdt = __kdt || [];
+        __kdt.push({"public_key": "<?= $pubKey ?>"}); // A chave pública identifica a sua loja
+        (function() {
+            var kdt = document.createElement('script');
+            kdt.id = 'kdtjs'; kdt.type = 'text/javascript';
+            kdt.async = true;    kdt.src = 'https://i.k-analytix.com/k.js';
+            var s = document.getElementsByTagName('body')[0];
+            s.parentNode.insertBefore(kdt, s);
+            })();`;
+
+    var visitorID;
+
+    (function() {
+        var period = 300;
+        var limit = 20 * 1e3;
+        var nTry = 0;
+        var intervalID = setInterval(
+            function() {
+                var clear = limit / period <= ++nTry;
+
+                if ((typeof(Konduto) !== "undefined") && (typeof(Konduto.getVisitorID) !== "undefined")) {
+                    visitorID = window.Konduto.getVisitorID();
+                    const inputVisitorId = document.getElementById('visitor_id');
+                    inputVisitorId.value = visitorID;
+                    clear = true;
+                }
+                if (clear) {
+                    clearInterval(intervalID);
+                }
+            },
+            period);
+
+    })(visitorID);
+   
+    (function(){
+        let cardScript = document.createElement('script');
+        cardScript.setAttribute('src', '<?=$urlCard?>')
+        cardScript.setAttribute('id', 'cardScript')
+        document.body.appendChild(cardScript)
+
+        cardScript.addEventListener('load', function(){
+            $belluno('#payment_form_belluno_creditcard').card({
+                // a selector or DOM element for the container
+                // where you want the card to appear
+                container: '.card-wrapper', // *required*
+                formSelectors: {
+                    numberInput: 'input[id="belluno_card_number"]', // optional — default input[name="number"]
+                    expiryInput: 'input[id="belluno_expires_at"]', // optional — default input[name="expiry"]
+                    cvcInput: 'input[id="belluno_card_cvv"]', // optional — default input[name="cvc"]
+                    nameInput: 'input[id="belluno_card_name"]', // optional - defaults input[name="name"]
+                },
+                width: 200, // optional — default 350px
+                formatting:true,
+                // Default placeholders for rendered fields - optional
+                placeholders: {
+                    number: '•••• •••• •••• ••••',
+                    name: 'Nome do Portador',
+                    expiry: '••/••',
+                    cvc: '•••'
+                },
+                debug: false // optional - default false
+            });
+            $belluno('select[name=belluno_expiryyear]').on('change', function(){
+                var expiry=$belluno('input[id="belluno_expires_at"]').val();
+                var expArray=expiry.split("/");
+                expArray[1]=this.value;
+                expiry=expArray[0]+"/"+expArray[1];
+                $belluno('input[id="belluno_expires_at"]').val(expiry);
+                $belluno('.jp-card-expiry').html(expiry);
+                verifyInputs();
+            });
+            $belluno('select[name=belluno_expirymonth]').on('change', function(){
+                var expiry=$belluno('input[id="belluno_expires_at"]').val();
+                var expArray=expiry.split("/");
+                expArray[0]=this.value;
+                expiry=expArray[0]+"/"+expArray[1];
+                $belluno('input[id="belluno_expires_at"]').val(expiry);
+                $belluno('.jp-card-expiry').html(expiry);
+                verifyInputs();
+            });
+            $belluno('input[id="belluno_card_number"]').on('change', function(){
+                verifyInputs();
+            });
+            $belluno('input[id="belluno_expires_at"]').on('change', function(){
+                verifyInputs();
+            });
+            $belluno('input[id="belluno_card_cvv"]').on('change', function(){
+                verifyInputs();
+            });
+            const verifyInputs = () => {
+                var field_numbe = $belluno('input[id="belluno_card_number"]').val();
+                var field_expires =  $belluno('input[id="belluno_expires_at"]').val();
+                var field_cvv =  $belluno('input[id="belluno_card_cvv"]').val();
+
+                if(typeof field_numbe === 'undefined' || field_numbe === null || field_numbe === ''){
+                    return false;
+                } 
+                if(typeof field_expires === 'undefined' || field_expires === null || field_expires === '') {
+                    return false;
+                }
+                if(typeof field_cvv === 'undefined' || field_cvv === null || field_cvv === '') {
+                    return false;
+                }
+                updateKey();
+                setTimeout(function(){
+                    verifyInputs();
+                } , 90 * 1000);
+                return true;
+            }
+        })
+    })();
+
+    function bellunoInit(){
+        $belluno("#belluno_card_number").on("input", function() {
+            $cardNumber = this.value;
+            if ($cardNumber.length > 5) {
+                if (CreditCardValidation.checkCredit($cardNumber)) {
+                    let flag;
+                    flag = CreditCardValidation.getCardFlag($cardNumber);
+                    if (flag !== false) {
+                        jQuery("#card_flag").val(flag);
+                    }
+                } 
+            }
+        });
+    }
+    bellunoInit();
+</script>
+</fieldset>

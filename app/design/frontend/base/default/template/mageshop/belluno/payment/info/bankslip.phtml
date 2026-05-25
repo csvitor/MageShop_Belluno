@@ -1,0 +1,55 @@
+<?php 
+$baseUrl = Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB);
+$imageIcon = $baseUrl . 'media/mageshop/belluno/images/icon-boleto.png';
+$order = $this->getInfo()->getOrder();
+$title = $this->getMethod()->getTitle();
+?>
+
+<style>
+    .payment_belluno {
+        width: auto;
+        max-width: 200px;
+        display: flex;
+        align-items: center;
+    }
+    .payment_belluno img {
+        width: 35px;
+        margin-right: 10px;
+    }
+    .payment_belluno p {margin-left: 10px;}
+</style>
+<div class="payment_belluno">
+    <img src="<?php echo $imageIcon?>" alt="<?php echo $title; ?>" width="120px">
+    <p><?php echo $title; ?></p>
+</div>
+<?php
+if(!$order){
+    return;   
+}
+$payment = $order->getPayment();
+$method = $payment->getMethod();
+$status = $payment->getAdditionalInformation("status");
+if($method == 'belluno_bankslip' && $status == 'Processing'):
+$bankslip = json_decode($payment->getAdditionalInformation("bankslip"), true);
+$digitableLine = $bankslip['digitable_line']; 
+$url = $bankslip['url'];
+?>
+<style>
+    .border-bankslip {
+        border: 1px solid gray;
+        padding: 10px;
+    }
+</style>
+<br>
+<div class="border-bankslip">
+    <div class="digitable-line">
+        <h3><?= "Informações do boleto" ?></h3>
+        <h4>Linha digitável:</h4>
+        <textarea readonly rows="1" name="pixer" id="select-this"><?= $digitableLine ?></textarea>
+    </div>
+    <br>
+    <div class="btn-bankslip-download">
+        <input class="action primary btn-belluno-boleto" type="button" id="belluno_btn" onclick="window.open('<?= $url ?>');" value=" Baixe o seu boleto aqui " />
+    </div>
+</div>
+<?php endif; ?>

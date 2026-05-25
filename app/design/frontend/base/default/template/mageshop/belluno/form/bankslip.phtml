@@ -1,0 +1,22 @@
+<fieldset class="form-bankslip" id="payment_form_<?= $this->getMethodCode() ?>" style="display:none">
+    <ul class="form-list">
+        <li class="form-payment">
+            <ul>
+                <?php
+                $captureTax = $this->getFieldCaptureTax();
+                $helper = Mage::helper("belluno/data");
+                ?>
+                <?php if ($captureTax == true) : ?>
+                    <li class="fields">
+                        <div class="field">
+                            <label for="card_holder_cellphone" class="required"><?php echo $helper->__("CPF/CNPJ do cliente") ?> <em>*</em></label>
+                            <div class="input-box">
+                                <input type="text" id="client_document" placeholder="  <?php echo $helper->__("Digite aqui") ?>" class="input-text required-entry validate-document" name="payment[client_document]" onkeyup="maskDocument(this)" maxlength="18" />
+                            </div>
+                        </div>
+                    </li>
+                <?php endif; ?>
+            </ul>
+        </li>
+    </ul>
+</fieldset>

@@ -1,0 +1,163 @@
+<?php
+$orderId = Mage::getSingleton("checkout/session")->getLastOrderId();
+$order = Mage::getModel("sales/order")->load($orderId);
+$payment = $order->getPayment();
+$helper = Mage::helper("belluno");
+if ($orderId && $payment->getMethod() == 'belluno_pix'):
+   $status = $payment->getAdditionalInformation("status");
+   $total = $order->getGrandTotal();  
+   $pix = json_decode($payment->getAdditionalInformation('pix'), true);
+   $pix_expires_at = isset($pix['pix']['expires_at']) ? Mage::getModel('core/date')->timestamp($pix['pix']['expires_at']) : 0; 
+   $currentTimestamp = Mage::getModel('core/date')->timestamp(time());
+   $transaction_id = isset($pix['id']) ? $pix['id'] : null;
+   if(isset($pix) && $currentTimestamp <= $pix_expires_at && $status == "Open"){
+   $code = base64_decode($pix['pix']['base64_text']);
+   $link_code = $pix['link_code'];
+   $websocket = sprintf(
+		"%sbelluno/websocket?belluno_pix=%s", 
+		Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB),
+		$transaction_id
+	);
+?> 
+<div class="payment-pix sucess-detalhes-pix">
+	<div class="titulo-pagar-pix">Fazer Pagamento Pix/QR Code:</div>
+	<div class="qrcode">
+		<img src="data:image/png;base64,<?=$pix['pix']['base64_image']?>">
+	</div>
+	<div class="total">
+		<span>Valor:</span><?php echo Mage::helper('core')->currency($total);?>
+	</div>
+	<div class="copyCode">
+		<input type="text" value="<?=$code;?>" id="pixTextBelluno">
+		<div class="fieldcopycode" onclick="copiarTextoPix(this)">Copiar</div>
+		<p class="info-expire">O QR Code expira em: <?php echo date('d/m/Y H:i:s', $pix_expires_at); ?>.<br/>
+		Você também pode fazer o pagamento na seção Minha Conta > Pedidos</p>
+	</div>
+</div>
+<?php if($helper->getWebsocket() == '1'): ?>
+<div class="payment-pix-paid"></div>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('mageshop/belluno/js/websocket-belluno.js') ?>"></script>
+<script type="text/javascript" src="<?php echo $this->getSkinUrl('mageshop/belluno/js/jquery/jquery-2.1.4.min.js') ?>"></script>
+<script src='https://app.belluno.digital/pagess/plugins/Pusher/pusher-with-encryption.min.js'></script>
+<script src='https://app.belluno.digital/pagess/plugins/Pusher/pusher-with-encryption.worker.min.js'></script>
+<script src='https://app.belluno.digital/pagess/plugins/Echo/echo-without-module.js'></script>
+<script type="text/javascript">
+  $belluno(document).ready(function() {
+		window.Pusher = Pusher;
+		window.Echo = new Echo({
+			broadcaster: 'pusher',
+			key: 'ws_belluno',
+			wsHost: 'websocket.belluno.digital',
+			wsPort: 6001,
+			wssPort: 443,
+			forceTLS: true,
+			encrypted: true,
+			disableStats: true,
+			enabledTransports: ['ws', 'wss'],
+		});
+		window.Echo.channel('transaction.<?php echo $link_code;?>')
+			.listen('.TransactionPaid', (e) => {
+				paymentConfirmed('<?=$websocket?>')
+		});
+  });
+</script>
+<?php endif; ?>
+<?php }elseif(  $status == "Paid" ){ ?>
+	<div class="payment-pix-paid">
+		<div class="success">
+			<img src="<?php echo Mage::getBaseUrl(Mage_Core_Model_Store::URL_TYPE_WEB) ?>media/mageshop/belluno/images/payment_sucess.png">
+		</div>
+		<div class="comment">
+			<span>O pagamento deste pedido foi confirmado com sucesso! 
+            Seu produto será enviado em breve e você receberá um e-mail de confirmação assim que ele for despachado.
+            Agradecemos a sua compra e ficamos à disposição para eventuais dúvidas ou problemas.</span>
+		</div>
+	</div>
+<?php } endif; ?>
+
+
+<?php if ($payment->getMethod() == 'belluno_bankslip' && $payment->getAdditionalInformation("status") == 'Processing'):
+	$data = json_decode($payment->getAdditionalInformation('bankslip'), true);
+    $digitableLine = $data['digitable_line'];
+    $url = $data['url'];
+?>
+
+<style>
+    .button-belluno {
+        transition-duration: 0.4s;
+        background-color: #01478c;
+        color: white;
+        border: 1px solid #01478c;
+        padding: 8px 20px;
+        border-radius: 8px;
+        font-size: 16px;
+    }
+    .button-belluno:hover {
+        background-color: #023262;
+        border: 1px solid #023262;
+        color: #FFF;
+    }
+
+    .label-belluno {
+        height: 30px;
+        font-size: 16px;
+        text-align: center;
+        background: #dddada;
+        color: #43478c;
+        font-weight: 700;
+        margin: 0px 21px;
+    }
+
+    .border-belluno {
+        width: auto;
+        margin: auto;
+        display: table;
+    }
+
+    .row {
+        display: inline-block;
+        align-items: center;
+		
+    }
+	.linhes {
+		margin: 20px 0px;
+	}
+	
+</style>
+
+<script>
+    function copyTextSucess() {
+    navigator.clipboard
+        .writeText(document.getElementById("text-digitableline").innerText)
+        .then(
+        function () {},
+        function () {}
+        );
+    }
+</script>
+    <div class="actions-toolbar flex">
+        <div class="linhes">
+            <h4>Linha digitável</h4>
+            <div class="flex">
+                <fieldset class="border-belluno">
+                    <p class="label-belluno" id="text-digitableline"><?= $digitableLine ?></p>
+                </fieldset>
+            </div>
+        </div>
+    </div>
+    <br>
+    <div class="btn-bankslip-download">
+        <input class="action primary button-belluno row" type="button" id="belluno_btn" onclick="window.open('<?= $url ?>');" value=" Imprimir boleto " />
+        <button class="button-belluno row" id="button-copy" onclick="copyTextSucess()">Copiar</button>
+    </div>
+    <br>
+<?php endif; ?>
+
+<?php if ($payment->getMethod() == 'belluno_creditcard' && $payment->getAdditionalInformation("status_code") == 8): ?>
+<?php $linkAnalysis = str_replace('\\','', $payment->getAdditionalInformation("link")); ?>
+<script type="text/javascript">
+    window.addEventListener("load", function(){
+        window.open('<?php echo $linkAnalysis;?>', '_blank');
+    });
+</script>
+<?php endif; ?>

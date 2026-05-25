@@ -1,0 +1,71 @@
+<?xml version="1.0"?>
+<layout version="0.1.0">
+    <default>
+        <reference name="head">
+            <block type="core/template" name="belluno.config" template="mageshop/belluno/config/header.phtml" />
+        </reference>
+    </default>
+    <onestepcheckout_index_index translate="label">
+        <reference name="head">
+            
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/form-belluno.js</name>
+            </action>
+
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/card/creditcard.js</name>
+            </action>
+
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/jquery/jquery-2.1.4.min.js</name>
+            </action>
+            <action method="addJs"><script>mageshop/belluno/forge.min.js</script></action>
+        </reference>
+    </onestepcheckout_index_index>
+
+    <checkout_onepage_index translate="label">
+        <reference name="head">
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/form-belluno.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/card/creditcard.js</name>
+            </action>
+            <action method="addItem">
+                <type>skin_js</type>
+                <name>mageshop/belluno/js/jquery/jquery-2.1.4.min.js</name>
+            </action>
+            <action method="addJs">
+                <script>mageshop/belluno/forge.min.js</script>
+            </action>
+        </reference>
+    </checkout_onepage_index>
+
+    <checkout_onepage_success translate="label">
+        <reference name="head">
+            <reference name="head">
+                <action method="addJs"><script>mageshop/belluno/script.js</script></action>
+            </reference>
+            <action method="addItem"><type>skin_css</type><name>mageshop/belluno/css/page_success.css</name></action>
+        </reference>
+        <reference name="content">
+            <reference name="checkout.success">
+                <block type="core/template" name="belluno.info" template="mageshop/belluno/checkout/success.phtml" />
+            </reference>
+        </reference>
+    </checkout_onepage_success>
+
+    <sales_order_view>
+        <reference name="head">
+            <reference name="head">
+                <action method="addJs"><script>mageshop/belluno/script.js</script></action>
+            </reference>
+            <action method="addItem"><type>skin_css</type><name>mageshop/belluno/css/page_info.css</name></action>
+        </reference>
+    </sales_order_view>
+</layout>
